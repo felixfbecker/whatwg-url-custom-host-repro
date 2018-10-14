@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>URL API Inconsistencies</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+
+            <p class="text-right"><a href="https://github.com/felixfbecker/whatwg-url-custom-host-repro">View on GitHub</a></p>
+            
+            <h1>URL API Inconsistencies</h1>
+
+            <p>Browsers behave differently with parsing out the host in the <a href="https://developer.mozilla.org/docs/Web/API/URL">URL API</a> if the protocol is a custom scheme, e.g. <code>ssh://</code>.</p>
+
+            <p>Input: <code id="url-input"></code></p>
+            <table class="table">
+                <thead>
+                    <th>Browser</th>
+                    <th><code>url.protocol</code></th>
+                    <th><code>url.origin</code></th>
+                    <th><code>url.hostname</code></th>
+                    <th><code>url.pathname</code></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Your browser</td>
+                        <td><code id="url-protocol"></code></td>
+                        <td><code id="url-origin"></code></td>
+                        <td><code id="url-hostname"></code></td>
+                        <td><code id="url-pathname"></code></td>
+                    </tr>
+                    <tr>
+                        <td>Chrome (69.0.3497.100)</td>
+                        <td><code>"ssh:"</code></td>
+                        <td><code>"ssh://"</code></td>
+                        <td><code>""</code></td>
+                        <td><code>"//github.com/test/repo.git"</code></td>
+                    </tr>
+                    <tr>
+                        <td>Firefox (63.0b14)</td>
+                        <td><code>"ssh:"</code></td>
+                        <td><code>"null"</code></td>
+                        <td><code>""</code></td>
+                        <td><code>"//github.com/test/repo.git"</code></td>
+                    </tr>
+                    <tr>
+                        <td>Edge (42.17134.1.0, EdgeHTML 17.17134)</td>
+                        <td><code>"ssh:"</code></td>
+                        <td><code>"ssh://"</code></td>
+                        <td><code>"github.com"</code></td>
+                        <td><code>"/test/repo.git"</code></td>
+                    </tr>
+                    <tr>
+                        <td>Node (10.10.0)</td>
+                        <td><code>"ssh:"</code></td>
+                        <td><code>"null"</code></td>
+                        <td><code>"github.com"</code></td>
+                        <td><code>"/test/repo.git"</code></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/jsdom/whatwg-url"><code>whatwg-url</code></a> (7.0.0)</td>
+                        <td><code>"ssh:"</code></td>
+                        <td><code>"null"</code></td>
+                        <td><code>"github.com"</code></td>
+                        <td><code>"/test/repo.git"</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <script>
+                const input = 'ssh://github.com/test/repo.git'
+                document.getElementById('url-input').textContent = JSON.stringify(input)
+                console.log('input', input)
+                const url = new URL(input)
+                console.log('parsed', url)
+                document.getElementById('url-protocol').textContent = JSON.stringify(url.protocol)
+                document.getElementById('url-origin').textContent = JSON.stringify(url.origin)
+                document.getElementById('url-hostname').textContent = JSON.stringify(url.hostname)
+                document.getElementById('url-pathname').textContent = JSON.stringify(url.pathname)
+            </script>
+        </div>
+    </body>
+</html>
+
